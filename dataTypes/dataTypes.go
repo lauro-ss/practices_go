@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 //import sys "fmt"
 
@@ -30,5 +33,14 @@ func main() {
 	fmt.Println(numberInt)
 	fmt.Printf("The number value is: %v and his type: %T \n", numberFloat, numberFloat)
 	fmt.Printf("Name: %v Last Name: %v, Age: %v, Height: %v \n", name, lastName, age, height)
-	fmt.Printf("%1.f", PI)
+	fmt.Printf("%1.f \n", PI)
+
+	timeNow := time.Now()
+	for true {
+		if timeNow.Second() != time.Now().Second() {
+			//fmt.Println(timeNow.Format("02/01/2006 - 15:04:05"))
+			fmt.Println(timeNow.Format("01 Jan 2006 - 15:04:05"))
+			timeNow = time.Now()
+		}
+	}
 }
