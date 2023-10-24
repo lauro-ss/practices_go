@@ -32,4 +32,12 @@ func main() {
 	fmt.Println(slice)
 	body = fmt.Sprintf("Slice Value: %v Slice Type: %T, Slice Capacity: %v Slice Lenght: %v", sliceMake, sliceMake, cap(sliceMake), len(sliceMake))
 	fmt.Println(body)
+
+	for i, v := range sliceFromArray {
+		fmt.Printf("%v \t %v \n", i, v)
+	}
+
+	for _, v := range sliceFromArray {
+		fmt.Print(v)
+	}
 }
