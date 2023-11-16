@@ -1,11 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type card struct {
 	num  int
 	name string
 }
+
+type deck []card
 
 func initDeck() deck {
 	d := deck{}
@@ -18,7 +23,19 @@ func initDeck() deck {
 	return d
 }
 
-type deck []card
+func (d *deck) Deal(size int) (deck, error) {
+	if *d == nil {
+		return nil, errors.New("You need to init your deck with initDeck function")
+	}
+	if size > len(*d) {
+		return deck{},
+			errors.New(fmt.Sprintf("The deck has a size of %v and don't support a hand size of %v", len(*d), size))
+	}
+	dx := *d
+	hand := dx[:size]
+	*d = dx[size:]
+	return hand, nil
+}
 
 func printCards(i int, d deck) string {
 	if i == len(d) {
