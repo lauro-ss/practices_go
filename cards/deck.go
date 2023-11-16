@@ -9,8 +9,11 @@ type card struct {
 
 func initDeck() deck {
 	d := deck{}
+	shapes := [4]string{"Spades", "Diamonds", "Hearts", "Clubs"}
 	for i := 1; i <= 10; i++ {
-		d = append(d, card{num: i, name: "Spades"})
+		for _, shape := range shapes {
+			d = append(d, card{num: i, name: shape})
+		}
 	}
 	return d
 }
