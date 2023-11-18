@@ -1,12 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type Card struct {
@@ -57,19 +58,58 @@ func (d Deck) SaveToFile(fileName string) error {
 	return os.WriteFile(fileName, []byte(d.String()), 0666)
 }
 
-func (d Deck) SaveToBinFile(fileName string) {
-	file, _ := os.Create(fileName)
+func ReadFromFile(fileName string) (Deck, error) {
+	fileBytes, er := os.ReadFile(fileName)
+	deck := Deck{}
+	if er != nil {
+		return nil, er
+	}
+	stringDeck := string(fileBytes)
+	stringCards := strings.Split(stringDeck, "\n")
+
+	//the last indice it's a empty string
+	for _, card := range stringCards[:len(stringCards)-1] {
+		if string(card[1]) != " " {
+			stringValue := string(card[0]) + string(card[1])
+			num, _ := strconv.Atoi(stringValue)
+			deck = append(deck, Card{Num: num, Name: string(card[6:])})
+		} else {
+			num, _ := strconv.Atoi(string(card[0]))
+			deck = append(deck, Card{Num: num, Name: string(card[5:])})
+		}
+
+	}
+
+	return deck, er
+}
+
+func (d Deck) SaveToBinFile(fileName string) error {
+	file, er := os.Create(fileName)
 	defer file.Close()
-	// if er != nil {
-	// 	log.Fatalln(er)
-	// }
-	//var pi int8 = 2
-	buf := new(bytes.Buffer)
-	enc := gob.NewEncoder(file)
-	er := enc.Encode(d)
 	if er != nil {
 		log.Fatal(er)
 	}
-	fmt.Println(buf.Bytes())
-	//return file.Write(bin.Bytes())
+
+	enc := gob.NewEncoder(file)
+	er = enc.Encode(d)
+	if er != nil {
+		log.Fatal(er)
+	}
+
+	return nil
+}
+
+// Reads from a binary fileName and returns a Deck
+func ReadFromBinFile(fileName string) (Deck, error) {
+	var d *Deck = &Deck{}
+	file, er := os.OpenFile(fileName, os.O_RDONLY, 0666)
+	defer file.Close()
+	if er != nil {
+		return nil, er
+	}
+
+	dec := gob.NewDecoder(file)
+	dec.Decode(d)
+
+	return *d, nil
 }

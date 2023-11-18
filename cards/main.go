@@ -1,7 +1,9 @@
 package main
 
+import "fmt"
+
 func main() {
-	myDeck := initDeck()
+	// myDeck := initDeck()
 	// er := myDeck.SaveToFile("my_deck.txt")
 	// if er != nil {
 	// 	log.Fatalln(er)
@@ -11,5 +13,8 @@ func main() {
 	// if er != nil {
 	// 	log.Fatalln(er)
 	// }
-	myDeck.SaveToBinFile("my_deck.bin")
+	// myDeck.SaveToBinFile("my_deck.bin")
+	// LoadFromBinFile("my_deck.bin")
+	deck, _ := ReadFromFile("my_deck.txt")
+	fmt.Println(deck)
 }
