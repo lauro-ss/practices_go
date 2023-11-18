@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	// myDeck := initDeck()
+	myDeck := initDeck()
 	// er := myDeck.SaveToFile("my_deck.txt")
 	// if er != nil {
 	// 	log.Fatalln(er)
@@ -15,6 +15,5 @@ func main() {
 	// }
 	// myDeck.SaveToBinFile("my_deck.bin")
 	// LoadFromBinFile("my_deck.bin")
-	deck, _ := ReadFromFile("my_deck.txt")
-	fmt.Println(deck)
+	fmt.Println(len(Shuffle(myDeck)))
 }
