@@ -102,20 +102,20 @@ func ReadFromFile(fileName string) (Deck, error) {
 	return deck, er
 }
 
-func (d Deck) SaveToBinFile(fileName string) error {
+func (d Deck) SaveToBinFile(fileName string) {
 	file, er := os.Create(fileName)
 	defer file.Close()
 	if er != nil {
-		log.Fatal(er)
+		log.Fatalln(er)
+		os.Exit(1)
 	}
 
 	enc := gob.NewEncoder(file)
 	er = enc.Encode(d)
 	if er != nil {
-		log.Fatal(er)
+		log.Fatalln(er)
+		os.Exit(1)
 	}
-
-	return nil
 }
 
 // Reads from a binary fileName and returns a Deck
@@ -124,7 +124,8 @@ func ReadFromBinFile(fileName string) (Deck, error) {
 	file, er := os.OpenFile(fileName, os.O_RDONLY, 0666)
 	defer file.Close()
 	if er != nil {
-		return nil, er
+		log.Fatalln(er)
+		os.Exit(1)
 	}
 
 	dec := gob.NewDecoder(file)
