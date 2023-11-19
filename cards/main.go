@@ -15,5 +15,5 @@ func main() {
 	// }
 	// myDeck.SaveToBinFile("my_deck.bin")
 	// LoadFromBinFile("my_deck.bin")
-	fmt.Println(len(Shuffle(myDeck)))
+	fmt.Println(Shuffle(myDeck))
 }

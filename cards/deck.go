@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Card struct {
@@ -55,11 +56,11 @@ func (d Deck) String() string {
 	return printCards(0, d)
 }
 
-func shuffle(d Deck, runs int, fillDeck *Deck) {
+func shuffle(d Deck, runs int, fillDeck *Deck, r *rand.Rand) {
 	if runs > 0 && len(d) > 0 {
-		flag := rand.Int31n(int32(len(d)))
-		shuffle(d[flag:], runs-1, fillDeck)
-		shuffle(d[:flag], runs-1, fillDeck)
+		flag := r.Int31n(int32(len(d)))
+		shuffle(d[flag:], runs-1, fillDeck, r)
+		shuffle(d[:flag], runs-1, fillDeck, r)
 	} else {
 		for _, card := range d {
 			*fillDeck = append(*fillDeck, Card{Num: card.Num, Name: card.Name})
@@ -69,7 +70,8 @@ func shuffle(d Deck, runs int, fillDeck *Deck) {
 
 func Shuffle(d Deck) Deck {
 	deck := Deck{}
-	shuffle(d, 3, &deck)
+	rand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	shuffle(d, 3, &deck, rand)
 	return deck
 }
 
