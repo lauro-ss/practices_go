@@ -32,11 +32,11 @@ func initDeck() Deck {
 
 func (d *Deck) Deal(size int) (Deck, error) {
 	if *d == nil {
-		return nil, errors.New("You need to init your Deck with initDeck function")
+		return nil, errors.New("you need to init your Deck with initDeck function")
 	}
 	if size > len(*d) {
 		return Deck{},
-			errors.New(fmt.Sprintf("The Deck has a size of %v and don't support a hand size of %v", len(*d), size))
+			fmt.Errorf("the Deck has a size of %v and don't support a hand size of %v", len(*d), size)
 	}
 	dx := *d
 	hand := dx[:size]
@@ -106,11 +106,11 @@ func ReadFromFile(fileName string) (Deck, error) {
 
 func (d Deck) SaveToBinFile(fileName string) {
 	file, er := os.Create(fileName)
-	defer file.Close()
 	if er != nil {
 		log.Fatalln(er)
 		os.Exit(1)
 	}
+	defer file.Close()
 
 	enc := gob.NewEncoder(file)
 	er = enc.Encode(d)
@@ -124,11 +124,11 @@ func (d Deck) SaveToBinFile(fileName string) {
 func ReadFromBinFile(fileName string) (Deck, error) {
 	var d *Deck = &Deck{}
 	file, er := os.OpenFile(fileName, os.O_RDONLY, 0666)
-	defer file.Close()
 	if er != nil {
 		log.Fatalln(er)
 		os.Exit(1)
 	}
+	defer file.Close()
 
 	dec := gob.NewDecoder(file)
 	dec.Decode(d)
