@@ -2,10 +2,15 @@ package main
 
 import "fmt"
 
-type enum map[string]string
+type dict map[any]any
 
 func main() {
-	var t enum
-	t = map[string]string{}
+	var t dict
+	t = map[any]any{}
+	t[0] = "Zero"
+	t[1] = "One"
+
+	delete(t, 1)
+
 	fmt.Println(t)
 }
