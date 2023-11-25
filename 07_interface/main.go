@@ -2,10 +2,6 @@ package main
 
 import "fmt"
 
-type Animal interface {
-	Walk() string
-}
-
 func main() {
 	value := "\U0001f600"
 	fmt.Printf("%v \n", value)
