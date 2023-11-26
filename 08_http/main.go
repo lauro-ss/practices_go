@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+type Test interface{}
+
 func main() {
 	resp, err := http.Get("http://google.com")
 	if err != nil {
@@ -15,5 +17,8 @@ func main() {
 
 	bs := make([]byte, 99999)
 	resp.Body.Read(bs)
-	fmt.Println(string(bs))
+	if re, ok := resp.Body.(Test); ok {
+		fmt.Print(re)
+	}
+	// fmt.Println(string(bs))
 }
