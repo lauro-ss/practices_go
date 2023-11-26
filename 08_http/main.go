@@ -9,7 +9,7 @@ import (
 func main() {
 	resp, err := http.Get("http://google.com")
 	if err != nil {
-		fmt.Errorf("Error: %v", err)
+		fmt.Printf("Error: %v", err)
 		os.Exit(1)
 	}
 
