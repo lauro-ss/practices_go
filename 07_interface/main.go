@@ -8,4 +8,10 @@ func main() {
 	// fmt.Println(Walk(cat))
 	// fmt.Println(dog.Feed("\U0001F356"))
 	// fmt.Println(cat.Feed("\U0001F41F"))
+
+	t := Triangle{Height: 10, Base: 10}
+	s := Square{Side: 10}
+
+	PrintArea(t)
+	PrintArea(s)
 }
