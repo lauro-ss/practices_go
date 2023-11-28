@@ -8,10 +8,17 @@ import (
 	"github.com/eiannone/keyboard"
 )
 
-const SIZE_PAGE = 400
+const (
+	NUM_LINES   = 10
+	NUM_COLUMNS = 400
+)
 
 type Page struct {
-	Row    uint32
+	Row   uint32
+	Lines []Line
+}
+
+type Line struct {
 	Column uint32
 	Value  []rune
 }
@@ -23,7 +30,8 @@ func main() {
 	defer func() {
 		_ = keyboard.Close()
 	}()
-	page := Page{Value: make([]rune, SIZE_PAGE)}
+	page := Page{Lines: make([]Line, NUM_LINES)}
+	page.Lines[page.Row].Value = make([]rune, NUM_COLUMNS)
 	clear()
 	for {
 		char, key, err := keyboard.GetKey()
@@ -68,24 +76,24 @@ func main() {
 func (p *Page) handlerRune(char rune, key keyboard.Key) {
 	switch key {
 	case keyboard.KeyBackspace:
-		if p.Column > 0 {
-			p.Column--
-			p.Value[p.Column] = 0
+		if p.Lines[p.Row].Column > 0 {
+			p.Lines[p.Row].Column--
+			p.Lines[p.Row].Value[p.Lines[p.Row].Column] = 0
 			return
 		}
 	case keyboard.KeySpace:
-		p.Value[p.Column] = ' '
+		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = ' '
 	default:
-		p.Value[p.Column] = char
+		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = char
 	}
-	if p.Column < SIZE_PAGE {
-		p.Column++
+	if p.Lines[p.Row].Column < NUM_COLUMNS {
+		p.Lines[p.Row].Column++
 	}
 }
 
 func (p *Page) Show() {
 	clear()
-	for _, line := range p.Value[:p.Column] {
+	for _, line := range p.Lines[p.Row].Value[:p.Lines[p.Row].Column] {
 		fmt.Print(string(line))
 	}
 }
