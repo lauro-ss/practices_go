@@ -38,8 +38,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-
-		page.handlerRune(char, key)
+		page.Lines[page.Row].handlerRune(char, key, &page)
 		page.Show()
 		//fmt.Printf("You pressed: rune %q, key %X\r\n", char, key)
 
@@ -73,28 +72,56 @@ func main() {
 	}
 }
 
-func (p *Page) handlerRune(char rune, key keyboard.Key) {
-	switch key {
-	case keyboard.KeyBackspace:
-		if p.Lines[p.Row].Column > 0 {
-			p.Lines[p.Row].Column--
-			p.Lines[p.Row].Value[p.Lines[p.Row].Column] = 0
-			return
-		}
-	case keyboard.KeySpace:
-		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = ' '
-	default:
-		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = char
-	}
-	if p.Lines[p.Row].Column < NUM_COLUMNS {
-		p.Lines[p.Row].Column++
-	}
-}
+// func (p *Page) handlerRune(char rune, key keyboard.Key) {
+// 	switch key {
+// 	case keyboard.KeyBackspace:
+// 		if p.Lines[p.Row].Column > 0 {
+// 			p.Lines[p.Row].Column--
+// 			p.Lines[p.Row].Value[p.Lines[p.Row].Column] = 0
+// 			return
+// 		}
+// 	case keyboard.KeySpace:
+// 		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = ' '
+// 	default:
+// 		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = char
+// 	}
+// 	if p.Lines[p.Row].Column < NUM_COLUMNS {
+// 		p.Lines[p.Row].Column++
+// 	}
+// }
 
 func (p *Page) Show() {
 	clear()
 	for _, line := range p.Lines[p.Row].Value[:p.Lines[p.Row].Column] {
 		fmt.Print(string(line))
+	}
+}
+
+func handlerEnter(p *Page) {
+	if p.Row < NUM_LINES {
+		p.Row++
+		p.Lines[p.Row].Value = make([]rune, NUM_COLUMNS)
+	}
+}
+
+func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
+	switch key {
+	case keyboard.KeyBackspace:
+		if l.Column > 0 {
+			l.Column--
+			l.Value[l.Column] = 0
+			return
+		}
+	case keyboard.KeySpace:
+		l.Value[l.Column] = ' '
+	case keyboard.KeyEnter:
+		handlerEnter(p)
+		return
+	default:
+		l.Value[l.Column] = char
+	}
+	if l.Column < NUM_COLUMNS {
+		l.Column++
 	}
 }
 
