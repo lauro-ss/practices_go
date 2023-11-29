@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 
@@ -13,9 +14,17 @@ const (
 	NUM_COLUMNS = 400
 )
 
+type Cursor struct {
+	Row    uint32
+	Column uint32
+}
+
 type Page struct {
-	Row   uint32
-	Lines []Line
+	Row          uint32
+	Lines        []Line
+	Cursor       Cursor
+	Writer       io.Writer
+	ReloadCursor bool
 }
 
 type Line struct {
@@ -30,7 +39,8 @@ func main() {
 	defer func() {
 		_ = keyboard.Close()
 	}()
-	page := Page{Lines: make([]Line, NUM_LINES)}
+
+	page := Page{Lines: make([]Line, NUM_LINES), Writer: os.Stdout}
 	page.Lines[page.Row].Value = make([]rune, NUM_COLUMNS)
 	clear()
 	for {
@@ -38,7 +48,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		page.Lines[page.Row].handlerRune(char, key, &page)
+		page.Lines[page.Cursor.Row].handlerRune(char, key, &page)
 		page.Show()
 		//fmt.Printf("You pressed: rune %q, key %X\r\n", char, key)
 
@@ -90,16 +100,29 @@ func main() {
 // 	}
 // }
 
+func (l Line) String() string {
+	str := ""
+	for _, char := range l.Value {
+		str += string(char)
+	}
+	return str
+}
+
 func (p *Page) Show() {
 	clear()
-	for _, line := range p.Lines[p.Row].Value[:p.Lines[p.Row].Column] {
-		fmt.Print(string(line))
+	for _, line := range p.Lines {
+		os.Stdout.WriteString(fmt.Sprint(line))
+	}
+	if p.ReloadCursor {
+		fmt.Fprintf(p.Writer, "\x1b[%dA", 1)
+		p.ReloadCursor = false
 	}
 }
 
 func handlerEnter(p *Page) {
 	if p.Row < NUM_LINES {
 		p.Row++
+		p.Cursor.Row++
 		p.Lines[p.Row].Value = make([]rune, NUM_COLUMNS)
 	}
 }
@@ -107,14 +130,20 @@ func handlerEnter(p *Page) {
 func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 	switch key {
 	case keyboard.KeyBackspace:
+		// replace the current rune with blank space
 		if l.Column > 0 {
 			l.Column--
 			l.Value[l.Column] = 0
 			return
+		} else {
+			p.Cursor.Row--
+			// put the cursor one line up
+			p.ReloadCursor = true
 		}
 	case keyboard.KeySpace:
 		l.Value[l.Column] = ' '
 	case keyboard.KeyEnter:
+		l.Value[l.Column] = '\n'
 		handlerEnter(p)
 		return
 	default:
@@ -122,6 +151,7 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 	}
 	if l.Column < NUM_COLUMNS {
 		l.Column++
+		p.Cursor.Column++
 	}
 }
 
