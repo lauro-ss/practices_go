@@ -20,9 +20,9 @@ type Cursor struct {
 }
 
 type Page struct {
-	Row          uint32
-	Lines        []Line
-	Cursor       Cursor
+	Row   uint32
+	Lines []Line
+	Cursor
 	Writer       io.Writer
 	ReloadCursor bool
 }
@@ -50,55 +50,8 @@ func main() {
 		}
 		page.Lines[page.Cursor.Row].handlerRune(char, key, &page)
 		page.Show()
-		//fmt.Printf("You pressed: rune %q, key %X\r\n", char, key)
-
-		// if key == keyboard.KeyEnter {
-		// 	lines[i] += "\n"
-		// 	fmt.Print(lines[i])
-		// 	i++
-		// } else {
-		// 	lines[i] += string(char)
-		// 	fmt.Print(lines[i])
-		// }
-
-		// if key == keyboard.KeyArrowUp {
-		// 	if i > 0 {
-		// 		i--
-		// 	}
-		// 	fmt.Print(lines[i])
-		// }
-
-		// if key == keyboard.KeyArrowDown {
-		// 	if i < len(lines) {
-		// 		i++
-		// 	}
-		// 	fmt.Print(i)
-		// }
-
-		// if key == keyboard.KeyEsc {
-		// 	fmt.Print(lines)
-		// 	break
-		// }
 	}
 }
-
-// func (p *Page) handlerRune(char rune, key keyboard.Key) {
-// 	switch key {
-// 	case keyboard.KeyBackspace:
-// 		if p.Lines[p.Row].Column > 0 {
-// 			p.Lines[p.Row].Column--
-// 			p.Lines[p.Row].Value[p.Lines[p.Row].Column] = 0
-// 			return
-// 		}
-// 	case keyboard.KeySpace:
-// 		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = ' '
-// 	default:
-// 		p.Lines[p.Row].Value[p.Lines[p.Row].Column] = char
-// 	}
-// 	if p.Lines[p.Row].Column < NUM_COLUMNS {
-// 		p.Lines[p.Row].Column++
-// 	}
-// }
 
 func (l Line) String() string {
 	str := ""
