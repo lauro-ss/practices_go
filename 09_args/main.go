@@ -42,7 +42,7 @@ func main() {
 
 	page := Page{Lines: make([]Line, NUM_LINES), Writer: os.Stdout}
 	page.Lines[page.Row].Value = make([]rune, NUM_COLUMNS)
-	clear()
+	clear(&page)
 	for {
 		char, key, err := keyboard.GetKey()
 		if err != nil {
@@ -62,12 +62,14 @@ func (l Line) String() string {
 }
 
 func (p *Page) Show() {
-	clear()
+	clear(p)
+	fmt.Printf("Row: %v Column: %v \n", p.Cursor.Row, p.Cursor.Column)
 	for _, line := range p.Lines {
-		os.Stdout.WriteString(fmt.Sprint(line))
+		p.Writer.Write([]byte(fmt.Sprint(line)))
 	}
 	if p.ReloadCursor {
 		fmt.Fprintf(p.Writer, "\x1b[%dA", 1)
+		fmt.Fprintf(p.Writer, "\x1b[%dC", p.Cursor.Column)
 		p.ReloadCursor = false
 	}
 }
@@ -76,6 +78,7 @@ func handlerEnter(p *Page) {
 	if p.Row < NUM_LINES {
 		p.Rows++
 		p.Cursor.Row++
+		p.Cursor.Column = 0
 		p.Lines[p.Row].Value = make([]rune, NUM_COLUMNS)
 	}
 }
@@ -84,14 +87,14 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 	switch key {
 	case keyboard.KeyBackspace:
 		// replace the current rune with blank space
-		if l.Columns > 0 {
-			l.Columns--
+		if p.Cursor.Column > 0 {
 			p.Cursor.Column--
 			l.Value[p.Cursor.Column] = 0
 			return
 		} else {
-			if p.Row > 0 {
+			if p.Cursor.Row > 0 {
 				p.Cursor.Row--
+				p.Cursor.Column = p.Lines[p.Cursor.Row].Columns - 1
 				// put the cursor one line up
 				p.ReloadCursor = true
 			}
@@ -111,8 +114,8 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 	}
 }
 
-func clear() {
+func clear(p *Page) {
 	cmd := exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
+	cmd.Stdout = p.Writer
 	cmd.Run()
 }
