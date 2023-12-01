@@ -90,15 +90,15 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 		if p.Cursor.Column > 0 {
 			p.Cursor.Column--
 			l.Value[p.Cursor.Column] = 0
-			return
 		} else {
 			if p.Cursor.Row > 0 {
 				p.Cursor.Row--
-				p.Cursor.Column = p.Lines[p.Cursor.Row].Columns - 1
+				p.Cursor.Column = p.Lines[p.Cursor.Row].Columns
 				// put the cursor one line up
 				p.ReloadCursor = true
 			}
 		}
+		return
 	case keyboard.KeySpace:
 		l.Value[p.Cursor.Column] = ' '
 	case keyboard.KeyEnter:
