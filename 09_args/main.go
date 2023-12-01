@@ -20,7 +20,7 @@ type Cursor struct {
 }
 
 type Page struct {
-	Row   uint32
+	Rows  uint32
 	Lines []Line
 	Cursor
 	Writer       io.Writer
@@ -28,8 +28,8 @@ type Page struct {
 }
 
 type Line struct {
-	Column uint32
-	Value  []rune
+	Columns uint32
+	Value   []rune
 }
 
 func main() {
@@ -84,9 +84,9 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 	switch key {
 	case keyboard.KeyBackspace:
 		// replace the current rune with blank space
-		if l.Column > 0 {
-			l.Column--
-			l.Value[l.Column] = 0
+		if l.Columns > 0 {
+			l.Columns--
+			l.Value[l.Columns] = 0
 			return
 		} else {
 			p.Cursor.Row--
@@ -94,16 +94,16 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 			p.ReloadCursor = true
 		}
 	case keyboard.KeySpace:
-		l.Value[l.Column] = ' '
+		l.Value[l.Columns] = ' '
 	case keyboard.KeyEnter:
-		l.Value[l.Column] = '\n'
+		l.Value[l.Columns] = '\n'
 		handlerEnter(p)
 		return
 	default:
-		l.Value[l.Column] = char
+		l.Value[l.Columns] = char
 	}
-	if l.Column < NUM_COLUMNS {
-		l.Column++
+	if l.Columns < NUM_COLUMNS {
+		l.Columns++
 		p.Cursor.Column++
 	}
 }
