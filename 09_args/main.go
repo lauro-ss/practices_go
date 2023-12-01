@@ -74,7 +74,7 @@ func (p *Page) Show() {
 
 func handlerEnter(p *Page) {
 	if p.Row < NUM_LINES {
-		p.Row++
+		p.Rows++
 		p.Cursor.Row++
 		p.Lines[p.Row].Value = make([]rune, NUM_COLUMNS)
 	}
@@ -86,21 +86,24 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 		// replace the current rune with blank space
 		if l.Columns > 0 {
 			l.Columns--
-			l.Value[l.Columns] = 0
+			p.Cursor.Column--
+			l.Value[p.Cursor.Column] = 0
 			return
 		} else {
-			p.Cursor.Row--
-			// put the cursor one line up
-			p.ReloadCursor = true
+			if p.Row > 0 {
+				p.Cursor.Row--
+				// put the cursor one line up
+				p.ReloadCursor = true
+			}
 		}
 	case keyboard.KeySpace:
-		l.Value[l.Columns] = ' '
+		l.Value[p.Cursor.Column] = ' '
 	case keyboard.KeyEnter:
-		l.Value[l.Columns] = '\n'
+		l.Value[p.Cursor.Column] = '\n'
 		handlerEnter(p)
 		return
 	default:
-		l.Value[l.Columns] = char
+		l.Value[p.Cursor.Column] = char
 	}
 	if l.Columns < NUM_COLUMNS {
 		l.Columns++
