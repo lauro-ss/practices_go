@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func binarySearch(s []int32, v int32) *int32 {
+func binarySearch[V int64 | int32](s []V, v V) *V {
 	//Gets the middle size of the slice
 	mid := len(s) / 2
 
@@ -27,7 +27,7 @@ func binarySearch(s []int32, v int32) *int32 {
 	return nil
 }
 
-func linearSearch(s []int32, v int32) *int32 {
+func linearSearch[V int64 | int32](s []V, v V) *V {
 	for i := range s {
 		if s[i] == v {
 			return &s[i]
