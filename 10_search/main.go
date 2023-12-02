@@ -27,19 +27,35 @@ func binarySearch(s []int32, v int32) *int32 {
 	return nil
 }
 
-//func
+func linearSearch(s []int32, v int32) *int32 {
+	for i := range s {
+		if s[i] == v {
+			return &s[i]
+		}
+	}
+	return nil
+}
 
 const SIZE = math.MaxInt16
+const TRIES = 100
 
 func main() {
 	list := make([]int32, SIZE)
 	for i := range list {
 		list[i] = int32(i + 1)
 	}
+	value := rand.Int31n(SIZE)
 	t1 := time.Now()
-	for i := 0; i < 1; i++ {
-		fmt.Println(*binarySearch(list, rand.Int31n(SIZE)))
+	for i := 0; i < TRIES; i++ {
+		binarySearch(list, value)
 	}
 	t2 := time.Now()
+	fmt.Println("Takes:", t2.Sub(t1))
+
+	t1 = time.Now()
+	for i := 0; i < TRIES; i++ {
+		linearSearch(list, value)
+	}
+	t2 = time.Now()
 	fmt.Println("Takes:", t2.Sub(t1))
 }
