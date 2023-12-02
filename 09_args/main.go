@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 
 	"github.com/eiannone/keyboard"
 )
@@ -63,7 +62,7 @@ func (l Line) String() string {
 
 func (p *Page) Show() {
 	clear(p)
-	fmt.Printf("Row: %v Column: %v \n", p.Cursor.Row, p.Cursor.Column)
+	fmt.Printf("\rRow: %v Column: %v \n", p.Cursor.Row, p.Cursor.Column)
 	for _, line := range p.Lines {
 		p.Writer.Write([]byte(fmt.Sprint(line)))
 	}
@@ -115,7 +114,7 @@ func (l *Line) handlerRune(char rune, key keyboard.Key, p *Page) {
 }
 
 func clear(p *Page) {
-	cmd := exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = p.Writer
-	cmd.Run()
+	// cmd := exec.Command("cmd", "/c", "cls")
+	// cmd.Stdout = p.Writer
+	// cmd.Run()
 }
