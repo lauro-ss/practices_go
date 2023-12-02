@@ -37,7 +37,7 @@ func linearSearch(s []int32, v int32) *int32 {
 }
 
 const SIZE = math.MaxInt16
-const TRIES = 100
+const TRIES = 1000
 
 func main() {
 	list := make([]int32, SIZE)
