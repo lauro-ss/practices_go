@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"regexp"
+	"time"
 )
 
 func main() {
@@ -13,27 +15,31 @@ func main() {
 		"https://amazon.com",
 	}
 	c := make(chan string)
-
+	var regex = regexp.MustCompile(` [a-z]+|[A-Z]+`)
+	var valid = regexp.MustCompile(`up|UP`)
 	for _, link := range links {
 		go checkLink(link, c)
 	}
-	//readChannel(c)
-	for i := 0; i < len(links); i++ {
-		fmt.Print(<-c)
+
+	for {
+		go func(l string, c chan string) {
+			time.Sleep(2 * time.Second)
+			if valid.MatchString(l) {
+				l = regex.ReplaceAllString(l, "")
+				fmt.Println(l, "It's working")
+			} else {
+				l = regex.ReplaceAllString(l, "")
+				fmt.Println(l, "It's off")
+			}
+			checkLink(l, c)
+		}(<-c, c)
 	}
 }
 
 func checkLink(link string, c chan<- string) {
 	if _, err := http.Get(link); err != nil {
-		c <- fmt.Sprintln(link, "off")
+		c <- fmt.Sprint(link, " off")
 		return
 	}
-	c <- fmt.Sprintln(link, "up")
-
-}
-
-func readChannel[V string | int32](c <-chan V) {
-	for i := 0; i < len(c); i++ {
-		fmt.Print(<-c)
-	}
+	c <- fmt.Sprint(link, " up")
 }
