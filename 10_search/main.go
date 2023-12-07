@@ -36,6 +36,28 @@ func linearSearch[V int64 | int32](s []V, v V) *V {
 	return nil
 }
 
+func linearSearchGo[V int64 | int32](s []V, v V) *V {
+	mid := len(s) / 2
+	c := make(chan *V, 2)
+	go linearSearchRoutine(s[:mid], &v, c)
+	go linearSearchRoutine(s[mid:], &v, c)
+	for value := range c {
+		if value != nil {
+			return value
+		}
+	}
+	return nil
+}
+
+func linearSearchRoutine[V int64 | int32](s []V, v *V, c chan<- *V) {
+	for i := range s {
+		if s[i] == *v {
+			c <- &s[i]
+		}
+	}
+	c <- nil
+}
+
 const SIZE = math.MaxInt16
 const TRIES = 1000
 
@@ -45,17 +67,25 @@ func main() {
 		list[i] = int32(i + 1)
 	}
 	value := rand.Int31n(SIZE)
+	var find any
 	t1 := time.Now()
 	for i := 0; i < TRIES; i++ {
-		binarySearch(list, value)
+		find = binarySearch(list, value)
 	}
 	t2 := time.Now()
-	fmt.Println("Takes:", t2.Sub(t1))
+	fmt.Println("Takes:", t2.Sub(t1), "Find", find)
 
 	t1 = time.Now()
 	for i := 0; i < TRIES; i++ {
-		linearSearch(list, value)
+		find = linearSearch(list, value)
 	}
 	t2 = time.Now()
-	fmt.Println("Takes:", t2.Sub(t1))
+	fmt.Println("Takes:", t2.Sub(t1), "Find", find)
+
+	t1 = time.Now()
+	for i := 0; i < TRIES; i++ {
+		find = linearSearchGo(list, value)
+	}
+	t2 = time.Now()
+	fmt.Println("Takes:", t2.Sub(t1), "Find", find)
 }
