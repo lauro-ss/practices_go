@@ -14,7 +14,7 @@ func main() {
 		"https://golang.org",
 		"https://amazon.com",
 	}
-	c := make(chan string)
+	c := make(chan string, len(links))
 	var regex = regexp.MustCompile(` [a-z]+|[A-Z]+`)
 	var valid = regexp.MustCompile(`up|UP`)
 	for _, link := range links {
