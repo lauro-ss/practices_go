@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -14,4 +15,12 @@ func CheckMethod(w http.ResponseWriter, r *http.Request, m string) bool {
 	}
 
 	return true
+}
+
+func AsJson(o any) ([]byte, error) {
+	b, err := json.Marshal(o)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
