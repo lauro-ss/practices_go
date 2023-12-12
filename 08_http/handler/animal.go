@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"httpserver/helper"
 	"httpserver/model"
 	"net/http"
@@ -44,13 +45,7 @@ func GetAnimal(w http.ResponseWriter, r *http.Request) {
 	if !helper.CheckMethod(w, r, http.MethodGet) {
 		return
 	}
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
+	fmt.Println(r.URL.Path)
 
-	a := model.Animal{Id: id, Name: "Cat", Icon: "\U0001F431"}
-
-	helper.AsJson(a, w)
+	helper.AsJson("", w)
 }
