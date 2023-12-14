@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 func CheckMethod(w http.ResponseWriter, r *http.Request, m string) bool {
@@ -25,12 +26,29 @@ func InternalError(w http.ResponseWriter, err error) {
 	http.Error(w, m, http.StatusInternalServerError)
 }
 
-func AsJson(o any, w http.ResponseWriter) {
+func AsJson(o any, w http.ResponseWriter) error {
 	b, err := json.Marshal(o)
 	if err != nil {
-		InternalError(w, err)
+		return err
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	io.WriteString(w, string(b))
 	//w.Write(b)
+	return nil
+}
+
+func GetId(url string) (string, error) {
+	rx := "[0-9]+"
+	r, err := regexp.Compile(rx)
+	if err != nil {
+		return "", err
+	}
+
+	return r.FindString(url), nil
+}
+
+func NotAllowed(w http.ResponseWriter, allowed []string) {
+	w.Header()["Allow"] = allowed
+	m := fmt.Sprintf("%v method not allowed", http.StatusMethodNotAllowed)
+	http.Error(w, m, http.StatusMethodNotAllowed)
 }

@@ -16,21 +16,40 @@ func ListAnimal(w http.ResponseWriter, r *http.Request) {
 		helper.InternalError(w, err)
 		return
 	}
-	helper.AsJson(o, w)
+	err = helper.AsJson(o, w)
+	if err != nil {
+		helper.InternalError(w, err)
+		return
+	}
 }
 
 func Animal(w http.ResponseWriter, r *http.Request) {
 
+	id, err := helper.GetId(r.URL.Path)
+
+	if err != nil {
+		helper.InternalError(w, err)
+		return
+	}
+
 	switch r.Method {
 	case http.MethodGet:
+		fmt.Println(id)
+		helper.AsJson("", w)
 		return
 	case http.MethodPost:
 		return
 	case http.MethodPut:
 		return
+	case http.MethodDelete:
+		return
+	default:
+		m := []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+		}
+		helper.NotAllowed(w, m)
 	}
-
-	fmt.Println(r.URL.Path)
-
-	helper.AsJson("", w)
 }
