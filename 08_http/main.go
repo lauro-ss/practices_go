@@ -9,7 +9,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler.Home)
 	mux.HandleFunc("/animal", handler.ListAnimal)
-	mux.HandleFunc("/animal/", handler.GetAnimal)
+	mux.HandleFunc("/animal/", handler.Animal)
 
 	err := http.ListenAndServe(
 		":4500", mux,

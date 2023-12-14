@@ -3,48 +3,33 @@ package handler
 import (
 	"fmt"
 	"httpserver/helper"
-	"httpserver/model"
+	"httpserver/service"
 	"net/http"
-	"os"
-	"strconv"
-	"strings"
 )
-
-const PATH = "./data/"
 
 func ListAnimal(w http.ResponseWriter, r *http.Request) {
 	if !helper.CheckMethod(w, r, http.MethodGet) {
 		return
 	}
-	b, err := os.ReadFile(PATH + "animal.csv")
+	o, err := service.GetAllAnimalCsv("animal.csv")
 	if err != nil {
 		helper.InternalError(w, err)
 		return
 	}
-
-	//To add database
-	s := strings.Split(string(b), "\n")[1:]
-
-	o := make([]model.Animal, len(s))
-	for i, v := range s {
-		c := strings.Split(v, ";")
-		o[i].Id, err = strconv.Atoi(c[0])
-		if err != nil {
-			helper.InternalError(w, err)
-			return
-		}
-		o[i].Name = c[1]
-		o[i].Icon = c[2]
-	}
-
 	helper.AsJson(o, w)
 }
 
-func GetAnimal(w http.ResponseWriter, r *http.Request) {
+func Animal(w http.ResponseWriter, r *http.Request) {
 
-	if !helper.CheckMethod(w, r, http.MethodGet) {
+	switch r.Method {
+	case http.MethodGet:
+		return
+	case http.MethodPost:
+		return
+	case http.MethodPut:
 		return
 	}
+
 	fmt.Println(r.URL.Path)
 
 	helper.AsJson("", w)
