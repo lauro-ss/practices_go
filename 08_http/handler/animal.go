@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"errors"
 	"httpserver/helper"
 	"httpserver/service"
 	"net/http"
@@ -11,12 +11,12 @@ func ListAnimal(w http.ResponseWriter, r *http.Request) {
 	if !helper.CheckMethod(w, r, http.MethodGet) {
 		return
 	}
-	o, err := service.GetAllAnimalCsv("animal.csv")
+	o, err := service.GetAllAnimalCsv()
 	if err != nil {
 		helper.InternalError(w, err)
 		return
 	}
-	err = helper.AsJson(o, w)
+	err = helper.AsJson(w, o)
 	if err != nil {
 		helper.InternalError(w, err)
 		return
@@ -25,7 +25,7 @@ func ListAnimal(w http.ResponseWriter, r *http.Request) {
 
 func Animal(w http.ResponseWriter, r *http.Request) {
 
-	id, err := helper.GetId(r.URL.Path)
+	id, err := helper.GetIntId(r.URL.Path)
 
 	if err != nil {
 		helper.InternalError(w, err)
@@ -34,8 +34,16 @@ func Animal(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		fmt.Println(id)
-		helper.AsJson("", w)
+		a, err := service.GetAnimalCsv(id)
+		if err != nil {
+			if errors.Is(err, service.ErrNotFound) {
+				helper.NotFound(w)
+			} else {
+				helper.InternalError(w, err)
+			}
+			return
+		}
+		helper.AsJson(w, a)
 		return
 	case http.MethodPost:
 		return

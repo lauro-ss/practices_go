@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 )
 
 func CheckMethod(w http.ResponseWriter, r *http.Request, m string) bool {
@@ -21,12 +22,12 @@ func CheckMethod(w http.ResponseWriter, r *http.Request, m string) bool {
 }
 
 func InternalError(w http.ResponseWriter, err error) {
-	log.Fatalln(err)
+	log.Println(err)
 	m := fmt.Sprintf("%v internal server error", http.StatusInternalServerError)
 	http.Error(w, m, http.StatusInternalServerError)
 }
 
-func AsJson(o any, w http.ResponseWriter) error {
+func AsJson(w http.ResponseWriter, o any) error {
 	b, err := json.Marshal(o)
 	if err != nil {
 		return err
@@ -37,18 +38,30 @@ func AsJson(o any, w http.ResponseWriter) error {
 	return nil
 }
 
-func GetId(url string) (string, error) {
+func GetIntId(url string) (int, error) {
 	rx := "[0-9]+"
 	r, err := regexp.Compile(rx)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-
-	return r.FindString(url), nil
+	str := r.FindString(url)
+	if str == "" {
+		return 0, nil
+	}
+	id, err := strconv.Atoi(str)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
 
 func NotAllowed(w http.ResponseWriter, allowed []string) {
 	w.Header()["Allow"] = allowed
 	m := fmt.Sprintf("%v method not allowed", http.StatusMethodNotAllowed)
 	http.Error(w, m, http.StatusMethodNotAllowed)
+}
+
+func NotFound(w http.ResponseWriter) {
+	m := fmt.Sprintf("%v not found", http.StatusNotFound)
+	http.Error(w, m, http.StatusNotFound)
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"httpserver/model"
 	"os"
 	"strconv"
@@ -9,7 +10,9 @@ import (
 
 const PATH = "./data/"
 
-func GetAllAnimalCsv(f string) ([]model.Animal, error) {
+var ErrNotFound = errors.New("service: element not found")
+
+func GetAllAnimalCsv() ([]model.Animal, error) {
 	b, err := os.ReadFile(PATH + "animal.csv")
 	if err != nil {
 		return nil, err
@@ -29,4 +32,23 @@ func GetAllAnimalCsv(f string) ([]model.Animal, error) {
 	}
 
 	return o, nil
+}
+
+func GetAnimalCsv(id int) (*model.Animal, error) {
+	if id <= 0 {
+		return nil, ErrNotFound
+	}
+
+	a, err := GetAllAnimalCsv()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range a {
+		if v.Id == id {
+			return &v, nil
+		}
+	}
+
+	return nil, ErrNotFound
 }
