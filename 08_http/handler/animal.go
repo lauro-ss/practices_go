@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func ListAnimal(w http.ResponseWriter, r *http.Request) {
+func AnimalGetPost(w http.ResponseWriter, r *http.Request) {
 	if !helper.CheckMethod(w, r, http.MethodGet) {
 		return
 	}
@@ -45,8 +45,6 @@ func Animal(w http.ResponseWriter, r *http.Request) {
 		}
 		helper.AsJson(w, a)
 		return
-	case http.MethodPost:
-		return
 	case http.MethodPut:
 		return
 	case http.MethodDelete:
@@ -54,7 +52,6 @@ func Animal(w http.ResponseWriter, r *http.Request) {
 	default:
 		m := []string{
 			http.MethodGet,
-			http.MethodPost,
 			http.MethodPut,
 			http.MethodDelete,
 		}
