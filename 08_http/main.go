@@ -7,24 +7,26 @@ import (
 	"regexp"
 )
 
-type Reader struct {
+type Router struct {
 	Handlers map[string]http.HandlerFunc
-	Patterns map[string]*regexp.Regexp
+	Values   map[string][]string
 }
 
-func NewReader() *Reader {
-	return &Reader{
+func NewReader() *Router {
+	return &Router{
 		Handlers: make(map[string]http.HandlerFunc, 5),
-		Patterns: make(map[string]*regexp.Regexp, 5)}
+		Values:   make(map[string][]string, 5)}
 }
 
-func (re *Reader) Add(pattern string, handler http.HandlerFunc) {
-	//pattern = strings.ReplaceAll(pattern, "{id}", "[A-Za-z0-9]*")
-	re.Patterns[pattern] = regexp.MustCompile(pattern)
+func (re *Router) Add(pattern string, handler http.HandlerFunc) {
+	rex := regexp.MustCompile("{[A-Z-a-z]+}")
+	v := rex.FindAllString(pattern, 2)
+	pattern = rex.ReplaceAllString(pattern, "{id}")
 	re.Handlers[pattern] = handler
+	re.Values[pattern] = v //Remover { } chaves daqui
 }
 
-func (re *Reader) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (re *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if re.Handlers[r.URL.Path] != nil {
 		re.Handlers[r.URL.Path].ServeHTTP(w, r)
 		return
@@ -32,10 +34,14 @@ func (re *Reader) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	rex := regexp.MustCompile("[0-9]+")
 	mapString := rex.ReplaceAllString(r.URL.Path, "{id}")
 	if re.Handlers[mapString] != nil {
+		v := rex.FindAllString(r.URL.Path, 2)
+		r.ParseForm()
+		r.Form.Add(re.Values[mapString][0][1:len(re.Values[mapString][0])-1], v[0])
+		r.Form.Add(re.Values[mapString][1][1:len(re.Values[mapString][1])-1], v[1])
 		re.Handlers[mapString].ServeHTTP(w, r)
 		return
 	}
-	fmt.Println(mapString)
+
 	http.Error(w, "not found", http.StatusNotFound)
 	//r.URL.Query().
 	//re.Patterns[r.URL.Path].
@@ -50,8 +56,8 @@ func main() {
 	r := NewReader()
 	r.Add("/animals", handler.Home)
 	r.Add("/animals/{id}", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("/animals/{id}")) })
-	r.Add("/animals/{id}/foods/{id}", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("/animals/{id}/foods/{id}"))
+	r.Add("/animals/{animalId}/foods/{foodId}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf("/animals/%v/foods/%v", r.Form.Get("animalId"), r.Form.Get("foodId"))))
 	})
 
 	err := http.ListenAndServe(
