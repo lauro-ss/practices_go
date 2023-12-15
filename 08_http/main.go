@@ -38,6 +38,7 @@ func (re *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		r.Form.Add(re.Values[mapString][0][1:len(re.Values[mapString][0])-1], v[0])
 		r.Form.Add(re.Values[mapString][1][1:len(re.Values[mapString][1])-1], v[1])
+
 		re.Handlers[mapString].ServeHTTP(w, r)
 		return
 	}
