@@ -1,4 +1,7 @@
 run: build
+	./bin/main
+
+runw: build
 	./bin/main.exe
 
 build:
