@@ -86,6 +86,7 @@ func (h *handler) notAllowed(w http.ResponseWriter, r *http.Request) {
 		allowed[i] = k
 		i++
 	}
+	//List all the allowed(keys) methods and return on the header
 	w.Header()["Allow"] = allowed
 	m := fmt.Sprintf("%v method not allowed", http.StatusMethodNotAllowed)
 	http.Error(w, m, http.StatusMethodNotAllowed)
