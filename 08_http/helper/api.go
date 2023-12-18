@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"net/http"
 	"regexp"
 )
@@ -19,6 +20,7 @@ type Api struct {
 	Handlers  map[string]*handler
 	getValues *regexp.Regexp //Regex for get the values from Path
 	getIds    *regexp.Regexp //Regex for get the Ids names from Path
+	NotFound  http.HandlerFunc
 }
 
 func (h *handler) newMethod(httpMethod string, hf http.HandlerFunc, ids []string) {
@@ -43,6 +45,7 @@ func NewApi() *Api {
 		Handlers:  make(map[string]*handler),
 		getValues: regexp.MustCompile("[0-9]+"),
 		getIds:    regexp.MustCompile("{[A-Z-a-z]+}"),
+		NotFound:  notFound,
 	}
 }
 
@@ -80,7 +83,7 @@ func (h *handler) handlerMethod(w http.ResponseWriter, r *http.Request) {
 	if h.Methods[r.Method] != nil {
 		h.Methods[r.Method].Func.ServeHTTP(w, r)
 	}
-	//not allowed
+	h.notAllowed(w, r)
 }
 
 func (h *handler) handlerValues(w http.ResponseWriter, r *http.Request, v []string) {
@@ -89,24 +92,42 @@ func (h *handler) handlerValues(w http.ResponseWriter, r *http.Request, v []stri
 		for i, id := range h.Methods[r.Method].IdNames {
 			r.Form.Add(id, v[i])
 		}
-		h.handlerMethod(w, r)
+		h.Methods[r.Method].Func.ServeHTTP(w, r)
 	}
-	//not allowed
+	h.notAllowed(w, r)
+}
+
+func (h *handler) notAllowed(w http.ResponseWriter, r *http.Request) {
+	allowed := make([]string, len(h.Methods))
+	i := 0
+	for k := range h.Methods {
+		allowed[i] = k
+		i++
+	}
+	w.Header()["Allow"] = allowed
+	m := fmt.Sprintf("%v method not allowed", http.StatusMethodNotAllowed)
+	http.Error(w, m, http.StatusMethodNotAllowed)
 }
 
 func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//If the path matchs anything, the server runs the handler
 	if a.Handlers[r.URL.Path] != nil {
 		a.Handlers[r.URL.Path].handlerMethod(w, r)
-		//a.Handlers[r.URL.Path].ServeHTTP(w, r)
 		return
 	}
 	//Get a map key replacing all the values with a default id name
 	key := a.getValues.ReplaceAllString(r.URL.Path, "{id}")
 	if a.Handlers[key] != nil {
+		//Get all the values from path
 		v := a.getValues.FindAllString(r.URL.Path, 2)
 		a.Handlers[key].handlerValues(w, r, v)
 		return
 	}
+	//If hits here, then a not found error is delivered
+	a.NotFound(w, r)
+}
 
-	http.Error(w, "not found", http.StatusNotFound)
+func notFound(w http.ResponseWriter, r *http.Request) {
+	m := fmt.Sprintf("%v not found", http.StatusNotFound)
+	http.Error(w, m, http.StatusNotFound)
 }

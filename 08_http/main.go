@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"httpserver/handler"
 	"httpserver/helper"
 	"net/http"
@@ -14,9 +15,9 @@ func main() {
 	r := helper.NewApi()
 	r.Get("/animals", handler.Home)
 	r.Get("/animals/{id}", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("/animals/{id}" + r.Form.Get("id"))) })
-	// r.Get("/animals/{animalId}/foods/{foodId}", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Write([]byte(fmt.Sprintf("/animals/%v/foods/%v", r.Form.Get("animalId"), r.Form.Get("foodId"))))
-	// })
+	r.Get("/animals/{animalId}/foods/{foodId}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf("/animals/%v/foods/%v", r.Form.Get("animalId"), r.Form.Get("foodId"))))
+	})
 
 	err := http.ListenAndServe(
 		":4500", r,
