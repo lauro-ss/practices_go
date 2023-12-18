@@ -49,13 +49,6 @@ func NewApi() *Api {
 	}
 }
 
-// Creates a unique uri
-// Ex: "/clients"
-// This uri only accepts GET/POST requests
-// func (a *Api) AddUri(pattern string, handler http.HandlerFunc) {
-// 	a.Handlers[pattern] = handler
-// }
-
 func (a *Api) Get(pattern string, hf http.HandlerFunc) {
 	ids := a.getIds.FindAllString(pattern, 2)
 	//Replace all the custom ids for a default id name
@@ -65,19 +58,6 @@ func (a *Api) Get(pattern string, hf http.HandlerFunc) {
 	}
 	a.Handlers[pattern].newMethod(http.MethodGet, hf, ids)
 }
-
-// Creates a unique uri with a custom id name
-// Ex: "/clients/{clientId}"
-// Ex: "/clients/{clienteId}/orders"
-// Ex: "/clients/{clienteId}/orders/{orderId}"
-// This uri only accepts DELETE/GET/PATCH/PUT requests
-// func (a *Api) AddUriId(pattern string, handler http.HandlerFunc) {
-// 	ids := a.getIds.FindAllString(pattern, 2)
-// 	//Replace all the custom ids for a default id name
-// 	pattern = a.getIds.ReplaceAllString(pattern, "{id}")
-// 	a.Handlers[pattern] = handler
-// 	a.Values[pattern] = ids
-// }
 
 func (h *handler) handlerMethod(w http.ResponseWriter, r *http.Request) {
 	if h.Methods[r.Method] != nil {
