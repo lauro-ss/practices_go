@@ -62,6 +62,7 @@ func (a *Api) Get(pattern string, hf http.HandlerFunc) {
 func (h *handler) handlerMethod(w http.ResponseWriter, r *http.Request) {
 	if h.Methods[r.Method] != nil {
 		h.Methods[r.Method].Func.ServeHTTP(w, r)
+		return
 	}
 	h.notAllowed(w, r)
 }
@@ -73,6 +74,7 @@ func (h *handler) handlerValues(w http.ResponseWriter, r *http.Request, v []stri
 			r.Form.Add(id, v[i])
 		}
 		h.Methods[r.Method].Func.ServeHTTP(w, r)
+		return
 	}
 	h.notAllowed(w, r)
 }
