@@ -2,6 +2,7 @@ package helper
 
 import (
 	"fmt"
+	"httpserver/helper/util"
 	"net/http"
 	"regexp"
 )
@@ -111,6 +112,6 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-	m := fmt.Sprintf("%v not found", http.StatusNotFound)
-	http.Error(w, m, http.StatusNotFound)
+	e := NewError("not found", http.StatusNotFound)
+	util.AsJsonError(w, e, http.StatusNotFound)
 }

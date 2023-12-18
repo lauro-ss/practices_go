@@ -27,3 +27,15 @@ func NotFound(w http.ResponseWriter) {
 	m := fmt.Sprintf("%v not found", http.StatusNotFound)
 	http.Error(w, m, http.StatusNotFound)
 }
+
+func AsJsonError(w http.ResponseWriter, o any, code int) {
+	b, err := json.Marshal(o)
+	if err != nil {
+		InternalError(w, "util: "+err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/problem+json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Write(b)
+	w.WriteHeader(code)
+}
