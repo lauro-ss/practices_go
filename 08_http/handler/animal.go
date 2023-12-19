@@ -1,53 +1,38 @@
 package handler
 
-// func AnimalGetPost(w http.ResponseWriter, r *http.Request) {
-// 	if !helper.CheckMethod(w, r, http.MethodGet) {
-// 		return
-// 	}
-// 	o, err := service.GetAllAnimalCsv()
-// 	if err != nil {
-// 		helper.InternalError(w, err)
-// 		return
-// 	}
-// 	err = helper.AsJson(w, o)
-// 	if err != nil {
-// 		helper.InternalError(w, err)
-// 		return
-// 	}
-// }
+import (
+	"httpserver/helper"
+	"httpserver/service"
+	"log"
+	"net/http"
+	"strconv"
+)
 
-// func Animal(w http.ResponseWriter, r *http.Request) {
+func AnimalList(w http.ResponseWriter, r *http.Request) {
+	o, err := service.GetAllAnimalCsv()
+	if err != nil {
+		helper.InternalError(w)
+		return
+	}
+	helper.AsJson(w, o)
+}
 
-// 	id, err := helper.GetIntId(r.URL.Path)
-
-// 	if err != nil {
-// 		util.InternalError(w, err)
-// 		return
-// 	}
-
-// 	switch r.Method {
-// 	case http.MethodGet:
-// 		a, err := service.GetAnimalCsv(id)
-// 		if err != nil {
-// 			if errors.Is(err, service.ErrNotFound) {
-// 				util.NotFound(w)
-// 			} else {
-// 				util.InternalError(w, err.Error())
-// 			}
-// 			return
-// 		}
-// 		util.AsJson(w, a)
-// 		return
-// 	case http.MethodPut:
-// 		return
-// 	case http.MethodDelete:
-// 		return
-// 	default:
-// 		m := []string{
-// 			http.MethodGet,
-// 			http.MethodPut,
-// 			http.MethodDelete,
-// 		}
-// 		helper.NotAllowed(w, m)
-// 	}
-// }
+func AnimalGet(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.FormValue("animalId"))
+	if err != nil {
+		log.Println("animal:", err)
+		helper.InternalError(w)
+		return
+	}
+	a, err := service.GetAnimalCsv(id)
+	if err != nil {
+		log.Println("animal:", err)
+		helper.InternalError(w)
+		return
+	}
+	if a == nil {
+		helper.NotFound(w)
+		return
+	}
+	helper.AsJson(w, a)
+}
