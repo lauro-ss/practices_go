@@ -18,9 +18,10 @@ type handler struct {
 
 type Api struct {
 	Handlers  map[string]*handler
-	getValues *regexp.Regexp //Regex for get the values from Path
-	getIds    *regexp.Regexp //Regex for get the Ids names from Path
-	NotFound  http.HandlerFunc
+	getValues *regexp.Regexp   //Regex for get the values from Path
+	getIds    *regexp.Regexp   //Regex for get the Ids names from Path
+	NotFound  http.HandlerFunc //Not found method
+	IdsNum    int              //Default value is 2
 }
 
 func (h *handler) newMethod(httpMethod string, hf http.HandlerFunc, ids []string) {
@@ -46,6 +47,7 @@ func NewApi() *Api {
 		getValues: regexp.MustCompile("[0-9]+"),
 		getIds:    regexp.MustCompile("{[A-Z-a-z]+}"),
 		NotFound:  notFound,
+		IdsNum:    2,
 	}
 }
 
@@ -66,7 +68,7 @@ func (a *Api) Delete(pattern string, hf http.HandlerFunc) {
 }
 
 func (a *Api) method(pattern string, hf http.HandlerFunc, method string) {
-	ids := a.getIds.FindAllString(pattern, 2)
+	ids := a.getIds.FindAllString(pattern, a.IdsNum)
 	//Replace all the custom ids for a default id name
 	pattern = a.getIds.ReplaceAllString(pattern, "{id}")
 	if a.Handlers[pattern] == nil {
@@ -118,7 +120,7 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	key := a.getValues.ReplaceAllString(r.URL.Path, "{id}")
 	if a.Handlers[key] != nil {
 		//Get all the values from path
-		v := a.getValues.FindAllString(r.URL.Path, 2)
+		v := a.getValues.FindAllString(r.URL.Path, a.IdsNum)
 		a.Handlers[key].handlerValues(w, r, v)
 		return
 	}
