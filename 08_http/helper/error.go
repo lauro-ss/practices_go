@@ -25,6 +25,6 @@ func InternalError(w http.ResponseWriter) {
 func writeError(w http.ResponseWriter, b []byte, status int) {
 	w.Header().Set("Content-Type", "application/problem+json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(http.StatusInternalServerError)
+	w.WriteHeader(status)
 	w.Write(b)
 }
