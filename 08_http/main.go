@@ -14,7 +14,7 @@ func main() {
 	// mux.HandleFunc("/animals/", handler.Animal)
 	r := helper.NewApi()
 	r.Get("/animals", handler.Home)
-	r.Get("/animals/{id}", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("/animals/{id}" + r.Form.Get("id"))) })
+	r.Get("/animals/{id}", func(w http.ResponseWriter, r *http.Request) { helper.AsJsonError(w, helper.NewError("teste", 500)) })
 	r.Get("/animals/{animalId}/foods/{foodId}", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("/animals/%v/foods/%v", r.Form.Get("animalId"), r.Form.Get("foodId"))))
 	})

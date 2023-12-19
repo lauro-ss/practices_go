@@ -50,13 +50,29 @@ func NewApi() *Api {
 }
 
 func (a *Api) Get(pattern string, hf http.HandlerFunc) {
+	a.method(pattern, hf, http.MethodGet)
+}
+
+func (a *Api) Post(pattern string, hf http.HandlerFunc) {
+	a.method(pattern, hf, http.MethodPost)
+}
+
+func (a *Api) Put(pattern string, hf http.HandlerFunc) {
+	a.method(pattern, hf, http.MethodPut)
+}
+
+func (a *Api) Delete(pattern string, hf http.HandlerFunc) {
+	a.method(pattern, hf, http.MethodDelete)
+}
+
+func (a *Api) method(pattern string, hf http.HandlerFunc, method string) {
 	ids := a.getIds.FindAllString(pattern, 2)
 	//Replace all the custom ids for a default id name
 	pattern = a.getIds.ReplaceAllString(pattern, "{id}")
 	if a.Handlers[pattern] == nil {
 		a.Handlers[pattern] = newHandler()
 	}
-	a.Handlers[pattern].newMethod(http.MethodGet, hf, ids)
+	a.Handlers[pattern].newMethod(method, hf, ids)
 }
 
 func (h *handler) handlerMethod(w http.ResponseWriter, r *http.Request) {
