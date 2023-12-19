@@ -23,10 +23,7 @@ func AsJsonError(w http.ResponseWriter, e Error) {
 		InternalError(w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/problem+json; charset=utf-8")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(e.Status)
-	w.Write(b)
+	writeError(w, b, e.Status)
 }
 
 func AsJson(w http.ResponseWriter, o any) {
