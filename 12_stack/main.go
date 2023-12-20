@@ -8,11 +8,16 @@ type Stack struct {
 	Next *Stack
 }
 
-func NewStack(d any) *Stack {
-	return &Stack{Data: d}
+func NewStack() *Stack {
+	return &Stack{}
 }
 
 func (s *Stack) Push(d any) {
+	//Fill the first elemenet
+	if s.Data == nil {
+		s.Data = d
+		return
+	}
 	if s.Next != nil {
 		s.Next.Push(d)
 		return
@@ -21,6 +26,13 @@ func (s *Stack) Push(d any) {
 	s.Next.Data = d
 	s.Next.Next = nil
 	s.Next.Prev = s
+}
+
+func (s *Stack) Print() string {
+	if s.Next != nil {
+		return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v \n", s.Prev, s.Data, s.Next.Data) + s.Next.Print()
+	}
+	return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v", s.Prev.Data, s.Data, s.Next)
 }
 
 func (s *Stack) String() {
@@ -34,10 +46,10 @@ func (s *Stack) String() {
 }
 
 func main() {
-	s := NewStack("0")
+	s := NewStack()
 	//s.String()
 	s.Push("1")
-	s.String()
-	// s.Push("2")
-	// s.String()
+	s.Push("2")
+	//s.String()
+	fmt.Println(s.Print())
 }
