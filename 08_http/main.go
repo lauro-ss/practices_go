@@ -1,26 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"httpserver/handler"
 	"httpserver/helper"
+	"httpserver/helper/middleware"
 	"net/http"
 )
 
 func main() {
-	// mux := http.NewServeMux()
-	// mux.HandleFunc("/animals", handler.Home)
-	// mux.HandleFunc("/animals", handler.AnimalGetPost)
-	// mux.HandleFunc("/animals/", handler.Animal)
-	r := helper.NewApi()
-	r.Get("/animals", handler.AnimalList)
-	r.Get("/animals/{animalId}", handler.AnimalGet)
-	r.Get("/animals/{animalId}/foods/{foodId}", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(fmt.Sprintf("/animals/%v/foods/%v", r.Form.Get("animalId"), r.Form.Get("foodId"))))
-	})
+	a := helper.NewApi()
+	a.Get("/animals", handler.AnimalList)
+	a.Post("/animals", handler.AnimalPost)
+	a.Get("/animals/{animalId}", handler.AnimalGet)
+
+	b := middleware.NewLogger(a)
+	c := middleware.NewContent(b)
 
 	err := http.ListenAndServe(
-		":4500", r,
+		":4500", c,
 	)
 	if err != nil {
 		panic(err)

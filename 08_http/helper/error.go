@@ -22,6 +22,11 @@ func InternalError(w http.ResponseWriter) {
 	writeError(w, []byte(m), http.StatusMethodNotAllowed)
 }
 
+func BadRequest(w http.ResponseWriter) {
+	m := fmt.Sprintf(`{"title":"bad request","status":%v}`, http.StatusBadRequest)
+	writeError(w, []byte(m), http.StatusBadRequest)
+}
+
 func writeError(w http.ResponseWriter, b []byte, status int) {
 	w.Header().Set("Content-Type", "application/problem+json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
