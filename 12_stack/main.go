@@ -28,21 +28,11 @@ func (s *Stack) Push(d any) {
 	s.Next.Prev = s
 }
 
-func (s *Stack) Print() string {
+func (s *Stack) String() string {
 	if s.Next != nil {
-		return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v \n", s.Prev, s.Data, s.Next.Data) + s.Next.Print()
+		return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v \n", s.Prev, s.Data, s.Next.Data) + s.Next.String()
 	}
 	return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v", s.Prev.Data, s.Data, s.Next)
-}
-
-func (s *Stack) String() {
-	//fmt.Println("#", s.Prev, s.Data, s.Next)
-	if s.Next != nil {
-		fmt.Println("#", s.Prev, s.Data, s.Next)
-		s.Next.String()
-		return
-	}
-	fmt.Println("!", s.Prev, s.Data, s.Next)
 }
 
 func main() {
@@ -51,5 +41,5 @@ func main() {
 	s.Push("1")
 	s.Push("2")
 	//s.String()
-	fmt.Println(s.Print())
+	fmt.Println(s)
 }
