@@ -28,18 +28,37 @@ func (s *Stack) Push(d any) {
 	s.Next.Prev = s
 }
 
-func (s *Stack) String() string {
+func (s *Stack) Pop() *any {
 	if s.Next != nil {
-		return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v \n", s.Prev, s.Data, s.Next.Data) + s.Next.String()
+		return s.Next.Pop()
 	}
-	return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v", s.Prev.Data, s.Data, s.Next)
+	//Uncomment for common Stack
+	s.Prev.Next = nil
+	s.Prev = nil
+	return &s.Data
 }
 
-func main() {
-	s := NewStack()
-	//s.String()
-	s.Push("1")
-	s.Push("2")
-	//s.String()
-	fmt.Println(s)
+func (s *Stack) String() string {
+	return fmt.Sprintf("%v", s.Data)
 }
+
+func (s *Stack) List() string {
+	if s.Next != nil {
+		return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v \n", s.Prev, s.Data, s.Next) + s.Next.List()
+	}
+	return fmt.Sprintf("Prev: %v, Actual: %v, Next: %v", s.Prev, s.Data, s.Next)
+}
+
+// func main() {
+// 	s := NewStack()
+// 	s.Push("1")
+// 	s.Push("2")
+// 	s.Push("3")
+// 	fmt.Println(s.List())
+// 	fmt.Println("Consumed:", *s.Pop())
+// 	fmt.Println(s.List())
+// 	fmt.Println("Consumed:", *s.Pop())
+// 	fmt.Println(s.List())
+// 	fmt.Println("Consumed:", *s.Pop())
+// 	fmt.Println(s.List())
+// }
