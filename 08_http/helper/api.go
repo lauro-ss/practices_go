@@ -6,6 +6,16 @@ import (
 
 type Api struct {
 	mux *mux
+
+	f http.Handler
+}
+
+func (a *Api) Use(m func(http.Handler) http.Handler) {
+	if a.f == nil {
+		a.f = m(a.mux)
+	} else {
+		a.f = m(a.f)
+	}
 }
 
 func NewApi() *Api {
@@ -29,5 +39,5 @@ func (a *Api) Delete(pattern string, hf http.HandlerFunc) {
 }
 
 func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	a.mux.ServeHTTP(w, r)
+	a.f.ServeHTTP(w, r)
 }

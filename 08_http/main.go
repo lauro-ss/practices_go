@@ -9,15 +9,16 @@ import (
 
 func main() {
 	a := helper.NewApi()
+
+	a.Use(middleware.Logger)
+	a.Use(middleware.ContentIsJson)
+
 	a.Get("/animals", handler.AnimalList)
 	a.Post("/animals", handler.AnimalPost)
 	a.Get("/animals/{animalId}", handler.AnimalGet)
 
-	b := middleware.NewLogger(a)
-	c := middleware.NewContent(b)
-
 	err := http.ListenAndServe(
-		":4500", c,
+		":4500", a,
 	)
 	if err != nil {
 		panic(err)
