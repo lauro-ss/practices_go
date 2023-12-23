@@ -7,14 +7,15 @@ import (
 type Api struct {
 	mux *mux
 
-	f http.Handler
+	stackServer http.Handler
 }
 
+//Pushs the middleware on top of stack server
 func (a *Api) Use(m func(http.Handler) http.Handler) {
-	if a.f == nil {
-		a.f = m(a.mux)
+	if a.stackServer == nil {
+		a.stackServer = m(a.mux)
 	} else {
-		a.f = m(a.f)
+		a.stackServer = m(a.stackServer)
 	}
 }
 
@@ -39,5 +40,5 @@ func (a *Api) Delete(pattern string, hf http.HandlerFunc) {
 }
 
 func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	a.f.ServeHTTP(w, r)
+	a.stackServer.ServeHTTP(w, r)
 }
