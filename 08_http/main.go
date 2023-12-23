@@ -10,8 +10,8 @@ import (
 func main() {
 	a := helper.NewApi()
 
-	a.Use(middleware.Logger)
 	a.Use(middleware.ContentIsJson)
+	a.Use(middleware.Logger)
 
 	a.Get("/animals", handler.AnimalList)
 	a.Post("/animals", handler.AnimalPost)
