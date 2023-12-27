@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"os"
 )
 
@@ -14,36 +14,51 @@ func GetEnv(key string) string {
 	b, _ := os.ReadFile(".env")
 	i := 0
 	end := len(b) - 1
+	envs := make(map[string]string, 1)
 	for i < end {
+		//35 == #
 		if b[i] == 35 {
-			skip(b, &i, &end)
+			skipLine(b, &i, &end)
 		} else {
-			// fmt.Println(b[i], string(b[i]), i)
-			fmt.Println(read(b, &i, &end))
-			i++
+			getEnv(envs, readLine(b, &i, &end))
+			//jumps only if the next caractere isn't #
+			if b[i] != 35 {
+				i++
+			}
 		}
-
 	}
 	return ""
 }
 
-func read(b []byte, i *int, end *int) string {
-	s := make([]byte, 100) //make
+func readLine(b []byte, i *int, end *int) []byte {
+	s := make([]byte, 20) //make
 	c := 0
+	//10 == \n
 	for b[*i] != 10 && *i < *end {
-		s[c] = b[*i]
-		*i++
-		c++
+		// comment
+		if b[*i] == 35 {
+			skipLine(b, i, end)
+			break
+		} else {
+			s[c] = b[*i]
+			*i++
+			c++
+		}
 	}
-	return string(s)
+	return s
 }
 
-func skip(b []byte, i *int, end *int) *int {
+func getEnv(envs map[string]string, b []byte) {
+	key := b[:bytes.IndexByte(b, byte(61))]
+	value := b[bytes.IndexByte(b, byte(61)):]
+	envs[string(key)] = string(value)
+}
+
+func skipLine(b []byte, i *int, end *int) *int {
 	for b[*i] != 10 && *i < *end {
-		// fmt.Println(b[i], string(b[i]), i)
 		*i++
 	}
-	//skips the \n
+	//skipLines the \n
 	if *i != *end {
 		*i++
 	}
