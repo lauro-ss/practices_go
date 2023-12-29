@@ -22,6 +22,7 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer conn.Close()
+	//conn.Exec(context.Background(), "UPDATE animal SET emoji = $1 WHERE name = 'CAT';", "\U0001F431")
 	Lines(conn)
 }
 
@@ -35,6 +36,8 @@ func Line(c *pgxpool.Pool) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Println("\U0001F436")
+	fmt.Println([]byte(emoji))
 	fmt.Println(id, name, emoji)
 }
 
