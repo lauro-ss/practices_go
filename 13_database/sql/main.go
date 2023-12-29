@@ -5,12 +5,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sql/env"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
-	envs, err := SourceEnv()
+	envs, err := env.SourceEnv()
 	if err != nil {
 		log.Fatalln(err)
 	}
