@@ -16,7 +16,7 @@ func main() {
 		log.Fatalln(err)
 	}
 	//"postgresql://username:password@localhost:5432/database_name"
-	v := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",
+	v := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v?sslmode=disable",
 		envs["USER"], envs["PASSWORD"], envs["HOST"], envs["PORT"], envs["DATABASE"])
 	conn, err := pgxpool.New(context.Background(), returnUrl(v))
 	if err != nil {
