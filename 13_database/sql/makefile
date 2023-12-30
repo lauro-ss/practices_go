@@ -15,3 +15,6 @@ ifdef fn
 else
 	@echo Provide a file name ex: 'make create fn=name'
 endif
+
+up:
+	migrate -path ./migration -database "postgresql://app:123456@localhost:5432/appanimal" -verbose up
