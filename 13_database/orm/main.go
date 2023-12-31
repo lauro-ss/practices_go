@@ -6,7 +6,6 @@ import (
 	"orm/env"
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -20,9 +19,17 @@ import (
 // }
 
 type Animal struct {
-	Id        uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name      string    `gorm:"type:varchar(20);not null;"`
-	Emoji     string    `gorm:"type:varchar(10);not null"`
+	Id        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	Name      string `gorm:"type:varchar(20);not null;"`
+	Emoji     string `gorm:"type:varchar(10);not null"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Food struct {
+	Id        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	Name      string `gorm:"type:varchar(20);not null;"`
+	Emoji     string `gorm:"type:varchar(10);not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -58,13 +65,22 @@ func setup() *gorm.DB {
 		panic(err)
 	}
 	// Migrate the schema
-	err = db.AutoMigrate(&Animal{})
+	err = db.AutoMigrate(&Animal{}, &Food{})
 	if err != nil {
 		panic(err)
 	}
 	return db
 }
 
+func Insert(db *gorm.DB, ob Animal) {
+	err := db.Create(&ob).Error
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
-	setup()
+	db := setup()
+
+	Insert(db, Animal{Name: "Cat", Emoji: "\U0001F431"})
 }
