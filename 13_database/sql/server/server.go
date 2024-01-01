@@ -25,9 +25,10 @@ func GetAnimal(db *pgxpool.Pool) http.Handler {
 			emoji string
 		)
 		//err := db.QueryRow(r.Context(), "select name, emoji from animal where id = $1;", id).Scan(&name, &emoji)
-		query := "select name, emoji from animal where name = " + id + " ;"
-		//rows, err := db.Query(r.Context(), "select name, emoji from animal where name = $1;", id)
-		rows, err := db.Query(r.Context(), query)
+		//query := "select name, emoji from animal where name = " + id + " ;" //SQL Injection
+		//rows, err := db.Query(r.Context(), query)
+		rows, err := db.Query(r.Context(), "select name, emoji from animal where name = $1;", id) //No SQL Injection
+
 		if err != nil {
 			fmt.Println(err)
 			http.NotFound(w, r)
@@ -35,6 +36,10 @@ func GetAnimal(db *pgxpool.Pool) http.Handler {
 		}
 
 		defer rows.Close()
+		if rows.CommandTag().RowsAffected() == 0 {
+			http.NotFound(w, r)
+			return
+		}
 		for rows.Next() {
 			rows.Scan(&name, &emoji)
 			w.Write([]byte(name + " " + emoji))
