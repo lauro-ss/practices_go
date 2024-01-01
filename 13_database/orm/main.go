@@ -77,10 +77,11 @@ func Insert(db *gorm.DB, ob Animal) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(ob.Id)
 }
 
 func main() {
 	db := setup()
 
-	Insert(db, Animal{Name: "Cat", Emoji: "\U0001F431"})
+	Insert(db, Animal{Name: "Dog", Emoji: "\U0001F431"})
 }

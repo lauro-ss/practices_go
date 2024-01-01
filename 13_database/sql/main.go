@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"sql/env"
+	"sql/server"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -24,7 +25,7 @@ func main() {
 	}
 	defer conn.Close()
 	//conn.Exec(context.Background(), "UPDATE animal SET emoji = $1 WHERE name = 'CAT';", "\U0001F431")
-	Lines(conn)
+	server.InitServer(conn)
 }
 
 func Line(c *pgxpool.Pool) {
@@ -37,8 +38,7 @@ func Line(c *pgxpool.Pool) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println("\U0001F436")
-	fmt.Println([]byte(emoji))
+
 	fmt.Println(id, name, emoji)
 }
 
