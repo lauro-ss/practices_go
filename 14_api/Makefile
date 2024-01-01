@@ -6,11 +6,16 @@ BIN = './bin'
 build:
 	go build -o "./bin" ./cmd/api/main.go
 
+buildSeed:
+	go build -o "./bin" ./cmd/seed/main.go
+
 run:
 	./bin/main
 
 runw: build
 	./bin/main.exe
+
+seed: buildSeed run
 
 create:
 ifdef fn
