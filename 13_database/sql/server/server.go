@@ -24,13 +24,26 @@ func GetAnimal(db *pgxpool.Pool) http.Handler {
 			name  string
 			emoji string
 		)
-		err := db.QueryRow(r.Context(), "select name, emoji from animal where id = $1;", id).Scan(&name, &emoji)
+		//err := db.QueryRow(r.Context(), "select name, emoji from animal where id = $1;", id).Scan(&name, &emoji)
+		query := "select name, emoji from animal where name = " + id + " ;"
+		//rows, err := db.Query(r.Context(), "select name, emoji from animal where name = $1;", id)
+		rows, err := db.Query(r.Context(), query)
 		if err != nil {
 			fmt.Println(err)
 			http.NotFound(w, r)
 			return
 		}
-		w.Write([]byte(name + " " + emoji))
+		defer rows.Close()
+		for rows.Next() {
+			rows.Scan(&name, &emoji)
+			w.Write([]byte(name + " " + emoji))
+		}
+		if rows.Err() != nil {
+			fmt.Println(rows.Err())
+			http.NotFound(w, r)
+			return
+		}
+
 	}
 	return http.HandlerFunc(fn)
 }
