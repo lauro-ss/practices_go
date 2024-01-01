@@ -33,6 +33,7 @@ func GetAnimal(db *pgxpool.Pool) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
+
 		defer rows.Close()
 		for rows.Next() {
 			rows.Scan(&name, &emoji)
