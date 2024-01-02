@@ -1,4 +1,4 @@
-package helper
+package api
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-//http method
+// http method
 type method struct {
 	handlerFunc http.HandlerFunc
 	idNames     []string
