@@ -9,7 +9,7 @@ import (
 
 type AnimalRepository interface {
 	// List() ([]data.Animal, error)
-	Get(id string) (data.Animal, error)
+	Get(id string) (*data.Animal, error)
 	// Update(data.Animal) (bool, error)
 	// Delete(data.Animal) (bool, error)
 	// Create(data.Animal) (string, error)
