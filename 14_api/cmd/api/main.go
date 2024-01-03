@@ -1,11 +1,14 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/lauro-ss/practices_go/14_api/pkg/env"
+	"github.com/lauro-ss/practices_go/14_api/internal/data"
 )
 
 func main() {
-	fmt.Println(env.SourceEnv())
+	conn, err := data.StartDatabase()
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+
 }

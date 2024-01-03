@@ -4,26 +4,25 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lauro-ss/practices_go/14_api/pkg/env"
 )
 
-func StartDatabase() *pgxpool.Pool {
+func StartDatabase() (*pgxpool.Pool, error) {
 	envs, err := env.SourceEnv()
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 	url := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v?sslmode=disable",
 		envs["USER"], envs["PASSWORD"], envs["HOST"], envs["PORT"], envs["DATABASE"])
 	c, err := pgxpool.New(context.Background(), removeZero(url))
 
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
-	return c
+	return c, nil
 }
 
 func removeZero(url string) string {
