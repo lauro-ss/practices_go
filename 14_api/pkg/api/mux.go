@@ -44,7 +44,7 @@ func newHandler() *handler {
 func newmux() *mux {
 	return &mux{
 		handlers:  make(map[string]*handler),
-		getValues: regexp.MustCompile("[0-9]+"),
+		getValues: regexp.MustCompile("([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9]+)"),
 		getIds:    regexp.MustCompile("{[A-Z-a-z]+}"),
 		notFound:  notFound,
 		idsNum:    2,
