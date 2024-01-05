@@ -11,5 +11,5 @@ type Food struct {
 	Id      string
 	Name    string
 	Emoji   string
-	Animals []Animal //Many to Many
+	animals []Animal //Many to Many
 }
