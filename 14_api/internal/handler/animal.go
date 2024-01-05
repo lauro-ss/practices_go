@@ -1,11 +1,26 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/lauro-ss/practices_go/14_api/internal/service"
 	"github.com/lauro-ss/practices_go/14_api/pkg/api"
 )
+
+func ListAnimal(ar service.AnimalRepository) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		a, err := ar.List()
+
+		if err != nil {
+			log.Println(err)
+			api.InternalError(w)
+			return
+		}
+
+		api.AsJson(w, a)
+	}
+}
 
 func GetAnimal(ar service.AnimalRepository) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +29,10 @@ func GetAnimal(ar service.AnimalRepository) http.HandlerFunc {
 		if err != nil {
 			api.InternalError(w)
 			return
+		}
+
+		if a == nil {
+			api.NotFound(w)
 		}
 
 		api.AsJson(w, a)

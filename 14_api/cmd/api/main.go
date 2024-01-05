@@ -22,7 +22,11 @@ func main() {
 
 	api.Use(middleware.Logger)
 
+	api.Get("/animals", handler.ListAnimal(animalRepository))
 	api.Get("/animals/{animalId}", handler.GetAnimal(animalRepository))
 
-	http.ListenAndServe(":4500", api)
+	err = http.ListenAndServe(":4500", api)
+	if err != nil {
+		panic(err)
+	}
 }
