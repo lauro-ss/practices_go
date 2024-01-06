@@ -17,7 +17,6 @@ func ListAnimal(ar service.AnimalRepository) http.HandlerFunc {
 			api.InternalError(w)
 			return
 		}
-
 		api.AsJson(w, a)
 	}
 }
@@ -34,7 +33,7 @@ func GetAnimal(ar service.AnimalRepository) http.HandlerFunc {
 		if a == nil {
 			api.NotFound(w)
 		}
-
+		a.Links.SelfGet(r)
 		api.AsJson(w, a)
 	}
 }

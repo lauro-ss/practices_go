@@ -58,11 +58,11 @@ func (a *AnimalSQL) List() ([]data.Animal, error) {
 			animals = nil
 			return nil, err
 		}
-		animal.Foods, err = a.GetFoodByAnimalId(animal.Id)
-		if err != nil {
-			animals = nil
-			return nil, err
-		}
+		// animal.Foods, err = a.GetFoodByAnimalId(animal.Id)
+		// if err != nil {
+		// 	animals = nil
+		// 	return nil, err
+		// }
 		if count == cap(animals) {
 			animals = append(animals, make([]data.Animal, count)...)
 		}
