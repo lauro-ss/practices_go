@@ -7,7 +7,7 @@ type Animal struct {
 	Name  string
 	Emoji string
 	Foods []Food //Many to Many
-	api.Links
+	api.Hateoas
 }
 
 type Food struct {

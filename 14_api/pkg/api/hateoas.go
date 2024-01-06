@@ -2,12 +2,7 @@ package api
 
 import "net/http"
 
-type Response struct {
-	Data  any    `json:"data"`
-	Links []Link `json:"links"`
-}
-
-type Links struct {
+type Hateoas struct {
 	Links []Link `json:"links"`
 }
 
@@ -17,7 +12,7 @@ type Link struct {
 	Uri    string `json:"uri"`
 }
 
-func (re *Links) SelfGet(r *http.Request) {
+func (re *Hateoas) SelfGet(r *http.Request) {
 	re.Links = append(re.Links,
 		Link{
 			Rel:    "self",
@@ -26,7 +21,7 @@ func (re *Links) SelfGet(r *http.Request) {
 	)
 }
 
-func (re *Links) SelfPut(r *http.Request) {
+func (re *Hateoas) SelfPut(r *http.Request) {
 	re.Links = append(re.Links,
 		Link{
 			Rel:    "self",
@@ -35,15 +30,11 @@ func (re *Links) SelfPut(r *http.Request) {
 	)
 }
 
-func (re *Links) SelfDelete(r *http.Request) {
+func (re *Hateoas) SelfDelete(r *http.Request) {
 	re.Links = append(re.Links,
 		Link{
 			Rel:    "self",
 			Action: http.MethodDelete,
 			Uri:    r.Host + r.RequestURI},
 	)
-}
-
-func (r *Response) Rel(l Link) {
-	r.Links = append(r.Links, l)
 }
