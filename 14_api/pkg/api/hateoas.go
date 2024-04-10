@@ -38,3 +38,39 @@ func (re *Hateoas) SelfDelete(r *http.Request) {
 			Uri:    r.Host + r.RequestURI},
 	)
 }
+
+func (re *Hateoas) ListSelfGet(r *http.Request, id string) {
+	re.Links = append(re.Links,
+		Link{
+			Rel:    "self",
+			Action: http.MethodGet,
+			Uri:    r.Host + r.RequestURI + "/" + id},
+	)
+}
+
+func (re *Hateoas) ListSelfPut(r *http.Request, id string) {
+	re.Links = append(re.Links,
+		Link{
+			Rel:    "self",
+			Action: http.MethodPut,
+			Uri:    r.Host + r.RequestURI + "/" + id},
+	)
+}
+
+func (re *Hateoas) ListSelfDelete(r *http.Request, id string) {
+	re.Links = append(re.Links,
+		Link{
+			Rel:    "self",
+			Action: http.MethodDelete,
+			Uri:    r.Host + r.RequestURI + "/" + id},
+	)
+}
+
+func (re *Hateoas) ListSelfPost(r *http.Request) {
+	re.Links = append(re.Links,
+		Link{
+			Rel:    "self",
+			Action: http.MethodDelete,
+			Uri:    r.Host + r.RequestURI},
+	)
+}

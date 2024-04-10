@@ -85,5 +85,6 @@ func main() {
 
 	Insert(db, Animal{Name: "Dog", Emoji: "\U0001F431"})
 	db.Select(&Animal{}, "Id")
-	db.Model(&Animal{}).Find(nil)
+	var a Animal
+	db.Find(a)
 }

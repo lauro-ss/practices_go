@@ -18,7 +18,7 @@ func ListAnimal(ar service.AnimalRepository) http.HandlerFunc {
 			return
 		}
 		for i := range a {
-			a[i].Hateoas.SelfGet(r)
+			a[i].Hateoas.ListSelfGet(r, a[i].Id)
 		}
 		api.AsJson(w, a)
 	}
