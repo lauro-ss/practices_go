@@ -24,6 +24,7 @@ func (q *queue) add(i int) {
 
 	if q.head == nil {
 		q.head = n
+		q.size++
 		return
 	}
 
@@ -33,6 +34,18 @@ func (q *queue) add(i int) {
 	}
 	tail.next = n
 	n.prev = tail
+	q.size++
+}
+
+func (q *queue) get() int {
+	if q.head == nil {
+		return 0
+	}
+
+	n := q.head
+	q.head = q.head.next
+	q.size--
+	return n.value
 }
 
 func getTail(n *node, v int) *node {
@@ -58,15 +71,48 @@ func stringNode(n *node) string {
 }
 
 func main() {
+	fmt.Println(testQueue())
 	q := createQueue()
 
-	q.add(2)
-	q.add(1)
-	q.add(1)
-	q.add(3)
-	q.add(3)
-	q.add(3)
-	q.add(4)
+	for v := range 10 {
+		q.add(v)
+		q.add(v)
+	}
 
+	fmt.Println(q.get())
 	fmt.Println(q)
+	fmt.Println(q.get())
+	fmt.Println(q)
+}
+
+func testQueue() bool {
+	q := createQueue()
+
+	for v := range 10 {
+		q.add(v)
+		q.add(v)
+	}
+
+	if q.size != 10 {
+		return false
+	}
+
+	q.get()
+	if q.size != 9 {
+		return false
+	}
+
+	return testPoint(q.head)
+}
+
+func testPoint(n *node) bool {
+	if n.next != nil {
+		if fmt.Sprintf("%p", n) == fmt.Sprintf("%p", n.next.prev) {
+			return testPoint(n.next)
+		} else {
+			return false
+		}
+	}
+
+	return true
 }
