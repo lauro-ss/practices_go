@@ -41,13 +41,3 @@ func FilterSlice(s []int, filter func(int) bool) []int {
 	}
 	return sl
 }
-
-func interate() func(yield func(int, string) bool) {
-	return func(yield func(int, string) bool) {
-		for i := 0; i < 10; i++ {
-			if !yield(i, string(i+48)) {
-				return
-			}
-		}
-	}
-}
