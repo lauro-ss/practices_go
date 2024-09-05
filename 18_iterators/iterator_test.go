@@ -63,3 +63,50 @@ func TestFilter(t *testing.T) {
 		t.Run(tC.desc, tC.testCase(tC.exp))
 	}
 }
+
+func Range(size int) []int {
+	s := make([]int, size)
+	for i := 0; i < size; i++ {
+		s[i] = i
+	}
+	return s
+}
+
+func Operation(v int) {}
+
+var slice_bench = Range(40000000)
+
+func BenchmarkFilterIterator(b *testing.B) {
+	filter := func(v int) bool { return v%2 == 0 }
+
+	b.ResetTimer()
+	b.StartTimer()
+	iterator := iterators.Iterator{Slice: slice_bench}
+
+	for iterator.Next() {
+		v := iterator.FilterIterator(filter)
+		if v != nil {
+			Operation(*v)
+		}
+	}
+}
+
+func BenchmarkFilterSlice(b *testing.B) {
+	filter := func(v int) bool { return v%2 == 0 }
+
+	b.ResetTimer()
+	b.StartTimer()
+	for _, v := range iterators.FilterSlice(slice_bench, filter) {
+		Operation(v)
+	}
+}
+
+func BenchmarkFilterYield(b *testing.B) {
+	filter := func(v int) bool { return v%2 == 0 }
+
+	b.ResetTimer()
+	b.StartTimer()
+	for v := range iterators.FilterYield(slice_bench, filter) {
+		Operation(v)
+	}
+}

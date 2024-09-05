@@ -1,9 +1,5 @@
 package iterators
 
-import (
-	"fmt"
-)
-
 type Iterator struct {
 	Slice []int
 	index int
@@ -11,7 +7,6 @@ type Iterator struct {
 
 func (i *Iterator) FilterIterator(filter func(int) bool) *int {
 	if filter(i.Slice[i.index]) {
-		fmt.Println("Filter for", i.Slice[i.index])
 		return &i.Slice[i.index]
 	}
 	return nil
@@ -25,7 +20,7 @@ func (i *Iterator) Next() bool {
 func FilterYield[Slice ~[]E, E any](s Slice, filter func(E) bool) func(yield func(E) bool) {
 	return func(yield func(E) bool) {
 		for _, v := range s {
-			if filter(v) && func() bool { fmt.Println("Filter for", v); return true }() && !yield(v) {
+			if filter(v) && !yield(v) {
 				return
 			}
 		}
@@ -33,9 +28,9 @@ func FilterYield[Slice ~[]E, E any](s Slice, filter func(E) bool) func(yield fun
 }
 
 func FilterSlice(s []int, filter func(int) bool) []int {
-	sl := []int{}
+	sl := make([]int, 0, len(s))
 	for _, v := range s {
-		if filter(v) && func() bool { fmt.Println("Filter for", v); return true }() {
+		if filter(v) {
 			sl = append(sl, v)
 		}
 	}
