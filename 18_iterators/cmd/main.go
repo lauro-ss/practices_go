@@ -19,7 +19,7 @@ func main() {
 	}
 
 	fmt.Println("FilterNext")
-	iterator := iterators.Iterator{Slice: slice}
+	iterator := iterators.Iterator[int]{Slice: slice}
 	for iterator.Next() {
 		v := iterator.FilterIterator(filter)
 		if v != nil {

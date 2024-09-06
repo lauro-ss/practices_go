@@ -46,7 +46,7 @@ func TestFilter(t *testing.T) {
 			exp:  []int{2, 4, 6, 8},
 			testCase: func(s []int) func(t *testing.T) {
 				return func(t *testing.T) {
-					iterator := iterators.Iterator{Slice: slice}
+					iterator := iterators.Iterator[int]{Slice: slice}
 					for iterator.Next() {
 						v := iterator.FilterIterator(filter)
 						if v != nil {
@@ -74,14 +74,16 @@ func Range(size int) []int {
 
 func Operation(v int) {}
 
-var slice_bench = Range(40000000)
+func SetupSlice() []int {
+	return Range(10000000)
+}
 
 func BenchmarkFilterIterator(b *testing.B) {
 	filter := func(v int) bool { return v%2 == 0 }
 
 	b.ResetTimer()
 	b.StartTimer()
-	iterator := iterators.Iterator{Slice: slice_bench}
+	iterator := iterators.Iterator[int]{Slice: SetupSlice()}
 
 	for iterator.Next() {
 		v := iterator.FilterIterator(filter)
@@ -96,7 +98,7 @@ func BenchmarkFilterSlice(b *testing.B) {
 
 	b.ResetTimer()
 	b.StartTimer()
-	for _, v := range iterators.FilterSlice(slice_bench, filter) {
+	for _, v := range iterators.FilterSlice(SetupSlice(), filter) {
 		Operation(v)
 	}
 }
@@ -106,7 +108,7 @@ func BenchmarkFilterYield(b *testing.B) {
 
 	b.ResetTimer()
 	b.StartTimer()
-	for v := range iterators.FilterYield(slice_bench, filter) {
+	for v := range iterators.FilterYield(SetupSlice(), filter) {
 		Operation(v)
 	}
 }
